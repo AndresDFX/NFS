@@ -1,7 +1,5 @@
 # NFS - Network File System 
 
-E
-
 
 ---
 
