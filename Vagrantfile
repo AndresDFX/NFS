@@ -1,11 +1,11 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-#VBoxManage controlvm "andresdfx_nfs" natpf1 "redUDP,udp,,5679,,5679" -->Instruccion para crear un portforwarding
 Vagrant.configure("2") do |config|
-    config.vm.box = "ubuntu/xenial64"
+    config.vm.box = ENV['BOX_NAME']
+    config.env.enable  
     config.vm.define "server_nfs" do |web|
-      web.vm.network "private_network", ip: "192.168.100.5"
+      web.vm.network "private_network", ip: ENV['IP_SERVER']
       web.vm.provision "file", source: "scripts/server-udp.py", destination: "$HOME/server-udp.py"
       web.vm.provision "shell", path: "server.sh"
       web.vm.network "forwarded_port", guest: 1234, host: 1234, protocol: "tcp"
@@ -19,7 +19,7 @@ Vagrant.configure("2") do |config|
     end
 
   config.vm.define "client01" do |web|
-    web.vm.network "private_network", ip: "192.168.100.4"
+    web.vm.network "private_network", ip: ENV['IP_CLIENT1']
     web.vm.provision "shell", path: "client.sh"
     web.vm.synced_folder "./shared", "/mnt/sharedfolder_client" 
     web.vm.provider :virtualbox do |vb|
@@ -30,7 +30,7 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define "client02" do |web|
-    web.vm.network "private_network", ip: "192.168.100.3"
+    web.vm.network "private_network", ip: ENV['IP_CLIENT2']
     web.vm.provision "shell", path: "client.sh"
     web.vm.synced_folder "./shared", "/mnt/sharedfolder_client" 
     web.vm.provider :virtualbox do |vb|
