@@ -8,18 +8,14 @@ sudo fuser -k -n udp 5678 ; python server-udp.py --port 5678 &
 #PART2 - Server NFS
 sudo apt-get -y install nfs-kernel-server
 sudo mkdir -p /mnt/sharedfolder
-sudo chown nobody:nogroup /mnt/sharedfolder && chmod 777 /mnt/sharedfolder 
+sudo chown nobody:nogroup /mnt/sharedfolder && chmod 1777 /mnt/sharedfolder 
 sudo echo "/mnt/sharedfolder *(rw,sync,no_subtree_check)" >> /etc/exports 
 sudo ufw allow from 192.168.100.5/24 to any port nfs 
 sudo systemctl restart nfs-kernel-server 
 sudo exportfs -a
 sudo systemctl restart nfs-kernel-server &
 
-#BONUS - Virtualization Active in VM
-sudo add-apt-repository 'deb [arch=amd64] https://download.virtualbox.org/virtualbox/debian xenial contrib'
-wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add -
-sudo apt-get update
-sudo apt-get -y install virtualbox-6.1 &
+
 
 
                                                 
