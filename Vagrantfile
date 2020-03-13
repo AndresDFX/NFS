@@ -18,7 +18,7 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define "client02" do |web|
-    web.vm.network "private_network", ip: ENV['IP_CLIENT1']
+    web.vm.network "private_network", ip: ENV['IP_CLIENT2']
     web.vm.provision "shell", path: "client.sh"
     web.vm.provider :virtualbox do |vb|
       vb.customize [ 'modifyvm', :id, '--memory', '386' ]
