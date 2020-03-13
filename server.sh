@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 sudo apt-get update
+sudo hostname -I | awk '{print $2}' >> .bashrc #Pone en la pantalla inicial de la maquina la IP
 
 #PART1 - Server Python UDP
 sudo apt-get -y install apache2 ; apt-get -y install python
@@ -13,18 +14,22 @@ sudo echo "/mnt/sharedfolder *(rw,sync,no_subtree_check)" >> /etc/exports
 sudo ufw allow from 192.168.100.5/24 to any port nfs 
 sudo systemctl restart nfs-kernel-server 
 sudo exportfs -a
-#sudo systemctl restart nfs-kernel-server &
+sudo systemctl restart nfs-kernel-server &
 
-#PART3 - SSH Keygen (For user Vagrant)
-ssh-keygen -t rsa -f ~/.ssh/id_rsa -C "" -N ""
-ssh-copy-id -i ~/.ssh/id_rsa.pub vagrant@192.168.100.4
-ssh-copy-id -i ~/.ssh/id_rsa.pub vagrant@192.168.100.3
+#PART3 - Server MPI (SSH For user vagrant)
+sudo apt-get -y install openmpi-bin openmpi-doc libopenmpi-dev
+ssh-keygen -t rsa -f /home/vagrant/.ssh/id_rsa -C "" -N ""
+ssh-copy-id -i /home/vagrant/.ssh/id_rsa.pub -o StrictHostKeyChecking=no vagrant@192.168.100.4
+ssh-copy-id -i /home/vagrant/.ssh/id_rsa.pub -o StrictHostKeyChecking=no vagrant@192.168.100.3
+#ssh vagrant@192.168.100.4   --->Probando conexion
+#ssh vagrant@192.168.100.3   --->Probando conexion
 
-#sudo ssh-copy-id -i ~/.ssh/id_rsa.pub vagrant@$(sudo hostname -I | awk '{print $2}')
-#sudo ssh -l vagrant 192.168.100.4   #probando conexion
-#sudo ssh -l vagrant 192.168.100.3   #probando conexion
-#sudo ssh -o StrictHostKeyChecking=no root@$(sudo hostname -I | awk '{print $2}')
-#ssh -o StrictHostKeyChecking=no root@192.168.100.5
-                                                
+#ssh-keygen -t rsa -f ~/.ssh/id_rsa -C "" -N ""
+#ssh-copy-id -i ~/.ssh/id_rsa.pub vagrant@192.168.100.4
+#ssh-copy-id -i ~/.ssh/id_rsa.pub vagrant@192.168.100.3
 
-
+#BONUS - Virtualization Active in VM
+#sudo add-apt-repository 'deb [arch=amd64] https://download.virtualbox.org/virtualbox/debian xenial contrib'
+#wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add -
+#sudo apt-get update
+#sudo apt-get -y install virtualbox-6.1 &

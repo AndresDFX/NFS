@@ -1,12 +1,17 @@
 <div align="justify">
-<u><h1>NFS - Network File System </u></h1>
+<u><h1>Definiciones</u></h1>
 
-NFS o Network File System es un protocolo de sistema de archivos distribuido, creado originalmente pero Sun Microsystems. A través de NFS, puede permitir que un sistema comparta directorios y archivos con otros en una red. En el uso compartido de archivos NFS, los usuarios e incluso los programas pueden acceder a la información en sistemas remotos casi como si residieran en una máquina local.
+**Socket UDP:** Los sockets UDP son sockets no orientados a conexión. Esto quiere decir que un programa puede abrir un socket y ponerse a escribir mensajes en él o leer, sin necesidad de esperar a que alguien se conecte en el otro extremo del socket. El protocolo UDP, al no ser orientado a conexión, no garantiza que el mensaje llegue a su destino. Parece claro que si mi programa envía un mensaje y no hay nadie escuchando, ese mensaje se pierde. De todas formas, aunque haya alguien escuchando, el protocolo tampoco garantiza que el mensaje llegue. Lo único que garantiza es, que si llega, llega sin errores.
 
-NFS se opera en un entorno *cliente-servidor* donde el servidor es responsable de administrar la autenticación, autorización y administración del cliente, así como todos los datos compartidos dentro de un sistema de archivos específico. Tras la autorización, cualquier número de clientes puede acceder a los datos compartidos como si estuvieran presentes en su almacenamiento interno. Configurar un servidor NFS en su sistema Ubuntu es muy simple. Todo lo que necesita hacer es realizar algunas instalaciones y configuraciones necesarias, tanto en el servidor como en las máquinas cliente, y ya está.
+
+**NFS:** Network File System es un protocolo de sistema de archivos distribuido, creado originalmente pero Sun Microsystems. A través de NFS, puede permitir que un sistema comparta directorios y archivos con otros en una red. En el uso compartido de archivos NFS, los usuarios e incluso los programas pueden acceder a la información en sistemas remotos casi como si residieran en una máquina local.
+
+**MPI:** Message Passing Interface es un protocolo de comunicación entre computadoras. Es el estándar para la comunicación entre los nodos que ejecutan un programa en un sistema de memoria distribuida. Las implementaciones en MPI consisten en un conjunto de bibliotecas de rutinas que pueden ser utilizadas en programas escritos en los lenguajes de programación C, C++, Fortran y Ada. La ventaja de MPI sobre otras bibliotecas de paso de mensajes, es que los programas que utilizan la biblioteca son portables (dado que MPI ha sido implementado para casi toda arquitectura de memoria distribuida), y rápidos, (porque cada implementación de la biblioteca ha sido optimizada para el hardware en la cual se ejecuta).
 
 ---
 <u><h2> Parte 1 - Socket UDP</u></h2>
+
+La documentacion completa como realizar este ejercicio se encuentra en el archivo [Despliegue de Servicios de Red.docx](./docs/Despliegue%20Servicios%20de%20Red%20-%20Usando%20Vagrant.docx).
 
 Para esta practica hay dos programas escritos en Python, un código es cliente y el otro es servidor. Estos códigos se comunican a través del protocolo UDP. Ejecute el programa cliente (que correrá en el `host`) y el servidor que correrá en la máquina virtual `server_nfs`.
 
@@ -15,12 +20,14 @@ Bastara solo con ejecutar el archivo [Vagrantfile](./Vagrantfile) mediante el co
 ---
 <u><h3> 1.1) Validando</u></h3>
 
-Iniciar el cliente en el `host` en el directorio [scripts](scripts/client-udp.py) mediante el comando `python client-udp.py --port 5678` esto devolvera un mensaje informando que el mensaje se envio y la conexion por socket se cerro.
+Iniciar el cliente en el `host` en el directorio [scripts](scripts_socket/client-udp.py) mediante el comando `python client-udp.py --port 5678` esto devolvera un mensaje informando que el mensaje se envio y la conexion por socket se cerro.
 
 Es importante considerar que tanto el cliente como el servidor a la hora de ser programados en el [Vagrantfile](./Vagrantfile) se les debe asignar puertos por encima de 1024 y por debajo de 65535 y pasar como argumentos “--port nnn” donde nnn es el puerto configurado en el *portafowarding udp* en el archivo [Vagrantfile](./Vagrantfile) para el `host` y `guest` respectivamente.
 
 ---
-<u><h2> Parte 2 - NFS Cluster</u></h2>
+<u><h2> Parte 2 - NFS</u></h2>
+
+La documentacion completa como realizar este ejercicio se encuentra en el archivo [CreandoTuPropioCluster.docx](./docs/CreandoTuPropioCluster.docx).
 
 Para llevar a cabo esta demostración se crearán tres máquinas virtuales con la siguiente configuración. 
 
@@ -104,5 +111,27 @@ Salir del `server_nfs` e ingresar a `client01`. Estando allí validar que el arc
 ls -l /mnt/sharedfolder_client/demo
 ```
 El archivo debería estar disponible también en `client01`.
+
+--- 
+<u><h2> Parte 3 - MPI</u></h2>
+
+La documentacion completa como realizar este ejercicio se encuentra en el archivo [CreandoTuPropioCluster.docx](./docs/CreandoTuPropioCluster.docx).
+
+Para llevar acabo esta parte es necesario que la maquina `server_nfs` pueda acceder por SSH a las maquinas `client01` y `client02` por medio de una clave publica RSA (Sin contraseña) esto ya se encuentra configurado en el archivo [Vagrantfile](./Vagrantfile)
+
+--- 
+<u><h3> 3.1) Validando</u></h3>
+
+Para probar la conexion SSH por parte del servidor a los clientes, ingresamos en el *host* el comando 
+```
+vagrant ssh server_nfs 
+```
+
+Posteriormente dentro de la maquina virtual ejecutamos el comando 
+```
+ssh vagrant@192.168.100.4
+``` 
+
+Este comando nos permitira conectarnos al `client01` por medio de SSH sin necesidad de contraseña. Para conectarnos al `client02` replicamos el comando pero cambiamos la ip por *192.168.100.3*.
 
 </div>
