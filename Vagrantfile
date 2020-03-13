@@ -2,8 +2,7 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
-    config.vm.box = ENV['BOX_NAME']
-    config.env.enable  
+    config.vm.box = "ubuntu/xenial64"
     config.vm.define "server_nfs" do |web|
       web.vm.network "private_network", ip:"192.168.100.5"
       web.vm.provision "file", source: "scripts/server-udp.py", destination: "$HOME/server-udp.py"
