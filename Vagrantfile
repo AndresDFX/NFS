@@ -4,8 +4,23 @@
 Vagrant.configure("2") do |config|
   config.env.enable  
   config.vm.box = ENV['BOX_NAME']
-  config.ssh.username = "vagrant"
-  config.ssh.password = "vagrant"
+  #config.ssh.username = "vagrant"
+  #config.ssh.password = "vagrant"
+  
+
+  config.vm.define "server_nfs" do |web|
+    web.vm.network "private_network", ip: ENV['IP_SERVER']
+    web.vm.provision "file", source: "scripts_socket/server-udp.py", destination: "$HOME/server-udp.py"
+    web.vm.provision "shell", path: "server.sh"
+    web.vm.network "forwarded_port", guest: 1234, host: 1234, protocol: "tcp"
+    web.vm.network "forwarded_port", guest: 5678, host: 5678, protocol: "udp"
+    web.vm.synced_folder "./shared", "/mnt/sharedfolder" 
+    web.vm.provider :virtualbox do |vb|
+      vb.customize [ 'modifyvm', :id, '--name', 'server_nfs' ]
+      vb.customize [ 'modifyvm', :id, '--memory', '782' ]
+      vb.customize [ 'modifyvm', :id, '--cpus', '1' ]
+    end
+  end
   
   config.vm.define "client01" do |web|
     web.vm.network "private_network", ip: ENV['IP_CLIENT1']
@@ -27,19 +42,7 @@ Vagrant.configure("2") do |config|
     end
   end
 
-  config.vm.define "server_nfs" do |web|
-    web.vm.network "private_network", ip: ENV['IP_SERVER']
-    web.vm.provision "file", source: "scripts_socket/server-udp.py", destination: "$HOME/server-udp.py"
-    web.vm.provision "shell", path: "server.sh"
-    web.vm.network "forwarded_port", guest: 1234, host: 1234, protocol: "tcp"
-    web.vm.network "forwarded_port", guest: 5678, host: 5678, protocol: "udp"
-    web.vm.synced_folder "./shared", "/mnt/sharedfolder" 
-    web.vm.provider :virtualbox do |vb|
-      vb.customize [ 'modifyvm', :id, '--name', 'server_nfs' ]
-      vb.customize [ 'modifyvm', :id, '--memory', '782' ]
-      vb.customize [ 'modifyvm', :id, '--cpus', '1' ]
-    end
-  end
+
 end 
 
  

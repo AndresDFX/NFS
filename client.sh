@@ -9,9 +9,10 @@ sudo chmod 777 /mnt/sharedfolder_client/
 sudo mount 192.168.100.5:/mnt/sharedfolder /mnt/sharedfolder_client &
 
 #PART3 - Client MPI (SSH For user Vagrant)
+sudo su
 sudo apt-get -y install openmpi-bin openmpi-doc libopenmpi-dev
 sudo find /etc/ssh/sshd_config -type f -print0 | xargs -0 sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/g' 
-sudo find /etc/ssh/sshd_config -type f -print0 | xargs -0 sed -i 's/PasswordAuthentication yes/PasswordAuthentication no/g' 
-sudo service ssh restart &
+sudo find /etc/ssh/sshd_config -type f -print0 | xargs -0 sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' 
+sudo service ssh restart
 
 
