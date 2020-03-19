@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 sudo apt-get update
 sudo hostname -I | awk '{print $2}' >> .bashrc #Pone en la pantalla inicial de la maquina la IP
+sudo echo "sudo su -" >> .bashrc
 
 #PART1 - Server Python UDP
 sudo apt-get -y install apache2 ; apt-get -y install python
@@ -17,21 +18,15 @@ sudo exportfs -a
 sudo systemctl restart nfs-kernel-server &
 
 #PART3 - Server MPI (SSH For user vagrant)
-sudo su
 sudo apt-get -y install openmpi-bin openmpi-doc libopenmpi-dev
 sudo find /etc/ssh/sshd_config -type f -print0 | xargs -0 sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/g' 
 sudo find /etc/ssh/sshd_config -type f -print0 | xargs -0 sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' 
 sudo service ssh restart
 ssh-keygen -t rsa -f /home/vagrant/.ssh/id_rsa -C "" -N ""
-#ssh-copy-id -i /home/vagrant/.ssh/id_rsa.pub -vagrant@192.168.100.4 
-#ssh-copy-id -i /home/vagrant/.ssh/id_rsa.pub -vagrant@192.168.100.3 
-#ssh vagrant@192.168.100.4   --->Probando conexion
-#ssh vagrant@192.168.100.3   --->Probando conexion
-
-#ssh-keygen -t rsa -f ~/.ssh/id_rsa -C "" -N ""
-#ssh-copy-id -i ~/.ssh/id_rsa.pub vagrant@192.168.100.4
-#ssh-copy-id -i ~/.ssh/id_rsa.pub vagrant@192.168.100.3
-#ssh-copy-id -i /home/vagrant/.ssh/id_rsa.pub vagrant@192.168.100.4
+#ssh-copy-id -i /home/vagrant/.ssh/id_rsa.pub vagrant@192.168.100.4     --->Copiar IP de client01
+#ssh-copy-id -i /home/vagrant/.ssh/id_rsa.pub vagrant@192.168.100.3     --->Copiar IP de client02
+#ssh vagrant@192.168.100.4                                              --->Probando conexion
+#ssh vagrant@192.168.100.3                                              --->Probando conexion
 
 #BONUS - Virtualization Active in VM
 #sudo add-apt-repository 'deb [arch=amd64] https://download.virtualbox.org/virtualbox/debian xenial contrib'
