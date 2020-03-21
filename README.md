@@ -1,19 +1,35 @@
 <div align="justify">
-<u><h1>Definiciones</u></h1>
+
+<u><h1> Instrucciones Generales</u></h1>
+
+En el script [main.sh](main.sh) se encuentran los recursos necesarios para crear el cluster, es posible ejecutar en sistemas UNIX de manera nativa o usando Git Bash(u otro software) que permita ejecutar scripts en sistemas Windows.
+
+Los scripts relacionados a cada **parte** del cluster se encuentran en las carpetas de PART por ejemplo `/PART1`.
+
+En el archivo [Vagrantfile](./Vagrantfile) comentamos las lineas correspondientes con `#` si deseamos aprovisionar el cluster para una o varias tareas especificas. Por ejemplo si no queremos ejecutar la **PARTE1** del cluster comentamos la linea de `server.vm.provision "shell", path: "PART1_server.sh`.
+
+Software necesario:
+
+* Vagrant - 2.2.6
+* VirtualBox - 6.0.14
+* Plugin vagrant env
+
+---
+<u><h2>Definiciones</u></h2>
 
 **Socket UDP:** Los sockets UDP son sockets no orientados a conexión. Esto quiere decir que un programa puede abrir un socket y ponerse a escribir mensajes en él o leer, sin necesidad de esperar a que alguien se conecte en el otro extremo del socket. El protocolo UDP, al no ser orientado a conexión, no garantiza que el mensaje llegue a su destino. Parece claro que si mi programa envía un mensaje y no hay nadie escuchando, ese mensaje se pierde. De todas formas, aunque haya alguien escuchando, el protocolo tampoco garantiza que el mensaje llegue. Lo único que garantiza es, que si llega, llega sin errores.
 
 
 **NFS:** Network File System es un protocolo de sistema de archivos distribuido, creado originalmente pero Sun Microsystems. A través de NFS, puede permitir que un sistema comparta directorios y archivos con otros en una red. En el uso compartido de archivos NFS, los usuarios e incluso los programas pueden acceder a la información en sistemas remotos casi como si residieran en una máquina local.
 
-**OpenMPI:** Message Passing Interface es un protocolo de comunicación entre computadoras. Es el estándar para la comunicación entre los nodos que ejecutan un programa en un sistema de memoria distribuida. Las implementaciones en MPI consisten en un conjunto de bibliotecas de rutinas que pueden ser utilizadas en programas escritos en los lenguajes de programación C, C++, Fortran y Ada. La ventaja de MPI sobre otras bibliotecas de paso de mensajes, es que los programas que utilizan la biblioteca son portables (dado que MPI ha sido implementado para casi toda arquitectura de memoria distribuida), y rápidos, (porque cada implementación de la biblioteca ha sido optimizada para el hardware en la cual se ejecuta).
+**MPI:** Message Passing Interface es un protocolo de comunicación entre computadoras. Es el estándar para la comunicación entre los nodos que ejecutan un programa en un sistema de memoria distribuida. Las implementaciones en MPI consisten en un conjunto de bibliotecas de rutinas que pueden ser utilizadas en programas escritos en los lenguajes de programación C, C++, Fortran y Ada. La ventaja de MPI sobre otras bibliotecas de paso de mensajes, es que los programas que utilizan la biblioteca son portables (dado que MPI ha sido implementado para casi toda arquitectura de memoria distribuida), y rápidos, (porque cada implementación de la biblioteca ha sido optimizada para el hardware en la cual se ejecuta).
 
 ---
 <u><h2> Parte 1 - Socket UDP</u></h2>
 
 La documentacion completa como realizar este ejercicio se encuentra en el archivo [Despliegue de Servicios de Red.docx](./docs/Despliegue%20Servicios%20de%20Red%20-%20Usando%20Vagrant.docx).
 
-Para esta practica hay dos programas escritos en Python, un código es cliente y el otro es servidor. Estos códigos se comunican a través del protocolo UDP. Ejecute el programa cliente (que correrá en el `host`) y el servidor que correrá en la máquina virtual `server_nfs`.
+Para esta practica hay dos programas escritos en Python, un código es cliente y el otro es servidor. Estos códigos se comunican a través del protocolo UDP. Ejecute el programa cliente (que correrá en el `host`) y el servidor que correrá en la máquina virtual `server`.
 
 Bastara solo con ejecutar el archivo [Vagrantfile](./Vagrantfile) mediante el comando `vagrant up server` en este punto el servidor estara en linea.
 
@@ -49,17 +65,15 @@ Vagrant.configure("2") do |config|
   config.vm.define "server" do |server|
     server.vm.network "private_network", ip: ENV['IP_BASE'] + "1"  
     server.vm.provision "shell", path: "general.sh"
-    server.vm.provision "shell", path: "PART1_server.sh"
-    #server.vm.provision "shell", path: "PART2_server.sh"
-    #server.vm.provision "shell", path: "PART3_server.sh"
-    server.vm.provision "file", source: "PART1/scripts_socket/server-udp.py", destination: "$HOME/server-udp.py"
+    #server.vm.provision "shell", path: "PART1_server.sh"
+    server.vm.provision "shell", path: "PART2_server.sh"
     server.vm.network "forwarded_port", guest: ENV['TCP_PORT'] , host: ENV['TCP_PORT'] , protocol: "tcp"
     server.vm.network "forwarded_port", guest: ENV['UDP_PORT'] , host: ENV['UDP_PORT'] , protocol: "udp"
     server.vm.synced_folder "./shared", "/shared" 
     server.vm.provider :virtualbox do |vb|
       vb.customize [ 'modifyvm', :id, '--name', ENV['MASTER_NAME'] ]
-      vb.customize [ 'modifyvm', :id, '--memory', '782' ]
-      vb.customize [ 'modifyvm', :id, '--cpus', '1' ]
+      vb.customize [ 'modifyvm', :id, '--memory', ENV['MEMORY_SERVER'] ]
+      vb.customize [ 'modifyvm', :id, '--cpus', ENV['CPUS'] ]
     end
   end
   
@@ -67,18 +81,18 @@ Vagrant.configure("2") do |config|
     config.vm.define "client0#{i}" do |client|
         client.vm.network "private_network", ip: ENV['IP_BASE']+"#{i + 1}"
         client.vm.provision "shell", path: "general.sh"
-        #client.vm.provision "shell", path: "PART2_client.sh"
-        #client.vm.provision "shell", path: "PART3_client.sh"
+        client.vm.provision "shell", path: "PART2_client.sh"
         client.vm.hostname = ENV['NODE_NAME']+"-#{i}"
         client.vm.provider :virtualbox do |vb|
-          vb.customize [ 'modifyvm', :id, '--memory', '386' ]
-          vb.customize [ 'modifyvm', :id, '--cpus', '1' ]
-          vb.customize [ 'modifyvm', :id, '--name', ENV['NODE_NAME']+"-#{i}" ]
+          vb.customize [ 'modifyvm', :id, '--name', ENV['NODE_NAME']+"0#{i}" ]
+          vb.customize [ 'modifyvm', :id, '--memory', ENV['MEMORY_CLIENT'] ]
+          vb.customize [ 'modifyvm', :id, '--cpus', ENV['CPUS']  ]
+
         end
     end
   end
-end 
 
+end  
 ```
 
 Para desplegar las máquinas se puede hacer con el comando:
@@ -113,33 +127,92 @@ ls -l /shared/demo
 El archivo debería estar disponible también en `client01`.
 
 --- 
-<u><h2> Parte 3 - OpenMPI</u></h2>
+<u><h2> Parte 3 - MPICH</u></h2>
 
 La documentacion completa como realizar este ejercicio se encuentra en el archivo [CreandoTuPropioCluster.docx](./docs/CreandoTuPropioCluster.docx).
 
 Para llevar acabo esta parte es necesario que la maquina `server` pueda acceder por SSH a las maquinas `client01` y `client02` por medio de una clave publica RSA (Sin contraseña) esto ya se encuentra configurado en el archivo [Vagrantfile](./Vagrantfile)
 
 --- 
-<u><h3> 3.1) Validando</u></h3>
+<u><h3> 3.1) Acceso Passworless</u></h3>
 
 Para probar la conexion SSH por parte del servidor a los clientes, ingresamos en el *host* el comando 
 ```
 vagrant ssh server
 ```
 
-Ejecutar los siguientes comandos:
+Ejecutar los siguientes comandos en el `server`:
 ```
-ssh-copy-id -i ~/.ssh/id_rsa.pub vagrant@node1 # type 'vagrant' as passwd
-ssh-copy-id -i ~/.ssh/id_rsa.pub vagrant@node2 # type 'vagrant' as passwd
+ssh-copy-id -i ~/.ssh/id_rsa.pub vagrant@client01 
+ssh-copy-id -i ~/.ssh/id_rsa.pub vagrant@client02
 ```
-
-Posteriormente dentro de la maquina virtual ejecutamos el comando 
+Digitamos `yes` y escribimos como clave `vagrant` para el usuario **vagrant**. Posteriormente dentro de la maquina virtual ejecutamos el comando:
 ```
-ssh vagrant@client01 
+ssh client01
 ``` 
 
-Este comando nos permitira conectarnos al `client01` por medio de SSH sin necesidad de contraseña. Para conectarnos al `client02` replicamos el comando pero cambiamos la ip por *client02*.
+Este comando nos permitira conectarnos al `client01` por medio de SSH sin necesidad de contraseña. Para conectarnos al `client02` replicamos el comando pero cambiamos el hostname por *client02*.
 
 
+--- 
+<u><h3> 3.2) MPI Centralizado</u></h3>
+
+La guia para el desarrollo de los ejercicios se encuentran en el archivo [README](https://github.com/josanabr/distributedsystems/blob/13ba520cb80f17534aa5928421c617b1ef2ee36b/MPI/README.md).
+
+El codigo base se encuentra en lenguaje C, los archivos para compilar se encuentran en el directorio [PART3](./PART3).
+
+Los archivos programados de manera centralizada son:
+
+- [mpiExample.c](./PART3/mpiExample.c)
+- [mpiExample2.c](./PART3/mpiExample2.c)
+- [mpiExample3.c](./PART3/mpiExample3.c)
+- [mpiExample4.c](./PART3/mpiExample4.c)
+- [mpiEx2a.c](./PART3/mpiEx2a.c)
+- [mpiEx2b.c](./PART3/mpiEx2b.c)
+- [mpiEx3a.c](./PART3/mpiEx3b.c)
+- [mpiEx3b.c](./PART3/mpiEx3b.c)
+- [mpiEx4a.c](./PART3/mpiEx4a.c)
+
+Asumiendo que estamos en el directorio [PART3](./PART3). Compilamos el programa asi:
+
+```
+mpicc mpiExample.c -o mpiExample
+```
+
+Para ejecutar el codigo
+
+```
+mpirun -np 2 --hostfile machinefile ./mpiExample
+```
+Donde el parametro despues de np es la cantidad de procesos que deseamos correr. El archivo `machinefile` contiene la linea localhost para indicar que se ejecutara de manera local.
+
+--- 
+<u><h3> 3.3) MPI Distribuido</u></h3>
+
+La guia para el desarrollo de los ejercicios se encuentran en el archivo [README](https://github.com/josanabr/vagrant/blob/master/mpich-multinode/README.md).
+
+El codigo base se encuentra en lenguaje C, los archivos para compilar se encuentran en el directorio [PART3](./PART3).
+
+Los archivos programados de manera distribuida son:
+
+- [mpidemo.c](./PART3/mpidemo.c)
+
+
+Asumiendo que estamos en el directorio [PART3](./PART3). Compilamos el programa asi:
+
+```
+mpicc mpidemo.c -o /shared/mpidemo
+```
+
+Para ejecutar el codigo
+
+```
+mpirun -n 4 -f hosts4run /shared/mpidemo
+```
+Donde el parametro despues de n es la cantidad de procesos que deseamos correr. El archivo `hosts4file` contiene la lista de clientes donde se ejecutara el codigo (es necesario que estos host esten previamente puestos en el archivo /etc/hosts).
+
+**Nota:** El directorio `/shared` es el directorio compartido mediante la configuracion de NFS.  
 
 </div>
+
+
