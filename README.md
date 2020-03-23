@@ -53,7 +53,7 @@ Para llevar a cabo esta demostración se crearán tres máquinas virtuales con l
 
 La definición de estas máquinas se da en el siguiente [Vagrantfile](./Vagrantfile).
 
-```
+```ruby
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
