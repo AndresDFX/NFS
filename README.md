@@ -5,15 +5,15 @@
 
 En el script [main.sh](main.sh) se encuentran los recursos necesarios para crear el cluster, es posible ejecutar en sistemas UNIX de manera nativa y en Windows usando Git Bash, GNU Win32 coreutils, las utilidades de MSYS usadas en MinGW o la opcion mas **RECOMENDADA** [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10) que permita ejecutar scripts en sistemas Windows.
 
-Los scripts relacionados a cada **parte** del cluster se encuentran en las carpetas de PART por ejemplo `/PART1`.
+Los scripts relacionados a cada **parte** del cluster se encuentran en las carpetas de **PART** por ejemplo `/PART1`.
 
-En el archivo [Vagrantfile](./Vagrantfile) comentamos las lineas correspondientes con `#` si deseamos aprovisionar el cluster para una o varias tareas especificas. Por ejemplo si no queremos ejecutar la **PARTE1** del cluster comentamos la linea de `server.vm.provision "shell", path: "PART1_server.sh`.
+En el archivo [Vagrantfile](./Vagrantfile) comentamos las lineas correspondientes con `#` si deseamos aprovisionar el cluster para una o varias tareas especificas. Por ejemplo si no queremos ejecutar la **PART1** del cluster comentamos la linea de `server.vm.provision "shell", path: "PART1_server.sh`.
 
 <u><b>Construido con:</b></u>
 
-* Vagrant - 2.2.6
-* VirtualBox - 6.0.14
-* [Vagrant env](https://github.com/gosuri/vagrant-env)
+* [Vagrant - 2.2.6](https://www.vagrantup.com/downloads.html)
+* [VirtualBox - 6.0.14](https://www.virtualbox.org/wiki/Downloads)
+* [Plugin - vagrant env](https://github.com/gosuri/vagrant-env)
 
 ---
 <h2><u>Definiciones</u></h2>
@@ -37,7 +37,7 @@ Bastara solo con ejecutar el archivo [Vagrantfile](./Vagrantfile) mediante el co
 ---
 <h3><u> 1.1) Validando</u></h3>
 
-Iniciar el cliente en el `host` en el directorio [scripts](/PART1/scripts_socket/client-udp.py) mediante el comando `python client-udp.py --port 5678` esto devolvera un mensaje informando que el mensaje se envio y la conexion por socket se cerro.
+Iniciar el cliente en el `host` en el directorio [scripts](/PART1/client-udp.py) mediante el comando `python client-udp.py --port 5678` esto devolvera un mensaje informando que el mensaje se envio y la conexion por socket se cerro.
 
 Es importante considerar que tanto el cliente como el servidor a la hora de ser programados en el [Vagrantfile](./Vagrantfile) se les debe asignar puertos por encima de 1024 y por debajo de 65535 y pasar como argumentos “--port nnn” donde nnn es el puerto configurado en el *portafowarding udp* en el archivo [Vagrantfile](./Vagrantfile) para el `host` y `guest` respectivamente.
 
@@ -61,16 +61,17 @@ N = 2
 
 Vagrant.configure("2") do |config|
   config.env.enable  
-  config.vm.box = ENV['BOX_NAME']
-  
+ 
   config.vm.define "server" do |server|
-    server.vm.network "private_network", ip: ENV['IP_BASE'] + "1"  
+    server.vm.box = ENV['BOX_NAME']
+    server.vm.hostname = ENV['MASTER_NAME']
+    server.vm.network "private_network", ip: ENV['IP_SERVER'], netmask:"255.255.0.0"
     server.vm.provision "shell", path: "general.sh"
     #server.vm.provision "shell", path: "PART1_server.sh"
     server.vm.provision "shell", path: "PART2_server.sh"
+    server.vm.synced_folder "./shared", "/home/vagrant/shared",owner: "nobody", group: "nogroup"
     server.vm.network "forwarded_port", guest: ENV['TCP_PORT'] , host: ENV['TCP_PORT'] , protocol: "tcp"
     server.vm.network "forwarded_port", guest: ENV['UDP_PORT'] , host: ENV['UDP_PORT'] , protocol: "udp"
-    server.vm.synced_folder "./shared", "/shared" 
     server.vm.provider :virtualbox do |vb|
       vb.customize [ 'modifyvm', :id, '--name', ENV['MASTER_NAME'] ]
       vb.customize [ 'modifyvm', :id, '--memory', ENV['MEMORY_SERVER'] ]
@@ -80,15 +81,16 @@ Vagrant.configure("2") do |config|
   
   (1..N).each do |i|
     config.vm.define "client0#{i}" do |client|
-        client.vm.network "private_network", ip: ENV['IP_BASE']+"#{i + 1}"
+        client.vm.box = ENV['BOX_NAME']
+        client.vm.hostname = ENV['NODE_NAME']+"0#{i}"
+        client.vm.network "private_network", ip: ENV['IP_BASE']+"#{i + 1}", netmask:"255.255.0.0"
         client.vm.provision "shell", path: "general.sh"
         client.vm.provision "shell", path: "PART2_client.sh"
-        client.vm.hostname = ENV['NODE_NAME']+"-#{i}"
+        client.vm.synced_folder "./shared", "/home/vagrant/shared",owner: "nobody", group: "nogroup"
         client.vm.provider :virtualbox do |vb|
           vb.customize [ 'modifyvm', :id, '--name', ENV['NODE_NAME']+"0#{i}" ]
           vb.customize [ 'modifyvm', :id, '--memory', ENV['MEMORY_CLIENT'] ]
           vb.customize [ 'modifyvm', :id, '--cpus', ENV['CPUS']  ]
-
         end
     end
   end
@@ -120,24 +122,24 @@ Ingresar al `server` y ejecutar el siguiente comando:
 ```
 touch /shared/demo
 ```
-Ingresar a `client01`. Estando allí validar que el archivo existe:
+Ingresar a `client01` por ssh. Estando allí validar que el archivo existe:
 
 ```
 ls -l /shared/demo
 ```
-El archivo debería estar disponible también en `client01`.
+El archivo debería estar disponible también en `client02`.
 
 --- 
 <h2><u> Parte 3 - MPICH</u></h2>
 
 La documentacion completa como realizar este ejercicio se encuentra en el archivo [CreandoTuPropioCluster.docx](./docs/CreandoTuPropioCluster.docx).
 
-Para llevar acabo esta parte es necesario que la maquina `server` pueda acceder por SSH a las maquinas `client01` y `client02` por medio de una clave publica RSA (Sin contraseña) esto ya se encuentra configurado en el archivo [Vagrantfile](./Vagrantfile)
+Para llevar acabo esta parte es necesario que la maquina `server` pueda acceder por SSH a las maquinas `client01` y `client02` por medio de una clave publica RSA (Sin contraseña) esto ya se encuentra preconfigurado en el archivo [Vagrantfile](./Vagrantfile)
 
 --- 
 <h3><u>3.1) Acceso Passworless</u></h3>
 
-Para probar la conexion SSH por parte del servidor a los clientes, ingresamos en el *host* el comando 
+Para configurar la conexion SSH por parte del servidor a los clientes, ingresamos en el *host* el comando 
 ```
 vagrant ssh server
 ```
@@ -173,8 +175,10 @@ Los archivos programados de manera centralizada son:
 - [mpiEx3a.c](./PART3/mpiEx3b.c)
 - [mpiEx3b.c](./PART3/mpiEx3b.c)
 - [mpiEx4a.c](./PART3/mpiEx4a.c)
+- [mpiEx4b.c](./PART3/mpiEx4b.c)
+- [mpiEx4c.c](./PART3/mpiEx4c.c)
 
-Asumiendo que estamos en el directorio [PART3](./PART3). Compilamos el programa asi:
+Asumiendo que estamos en el directorio [PART3](./PART3) dentro del *guest* `server`. Compilamos el programa asi:
 
 ```
 mpicc mpiExample.c -o mpiExample
@@ -199,7 +203,7 @@ Los archivos programados de manera distribuida son:
 - [mpidemo.c](./PART3/mpidemo.c)
 
 
-Asumiendo que estamos en el directorio [PART3](./PART3). Compilamos el programa asi:
+Asumiendo que estamos en el directorio [PART3](./PART3) dentro del *guest* `server`. Compilamos el programa asi:
 
 ```
 mpicc mpidemo.c -o /shared/mpidemo
@@ -210,9 +214,9 @@ Para ejecutar el codigo
 ```
 mpirun -n 4 -f hosts4run /shared/mpidemo
 ```
-Donde el parametro despues de n es la cantidad de procesos que deseamos correr. El archivo `hosts4file` contiene la lista de clientes donde se ejecutara el codigo (es necesario que estos host esten previamente puestos en el archivo /etc/hosts).
+Donde el parametro despues de n es la cantidad de procesos que deseamos correr. El archivo `hosts4file` contiene la lista de clientes donde se ejecutara el codigo.
 
-**Nota:** El directorio `/shared` es el directorio compartido mediante la configuracion de NFS.  
+**NOTA:** El directorio `/shared` es el directorio compartido mediante la configuracion de NFS.  
 
 </div>
 

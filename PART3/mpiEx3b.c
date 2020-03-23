@@ -3,7 +3,7 @@
 
 int main(int argc,char *argv[]){
 	int size, rank, dest, source, count, tag=1;
-	char inmsg, outmsg='x';
+	int inmsg, outmsg;
 	MPI_Status Stat;
 
 	MPI_Init(&argc,&argv);
@@ -12,34 +12,18 @@ int main(int argc,char *argv[]){
 
 	if (rank == 0) {
 	  dest = 1;
-	  source = 5;
-	  MPI_Send(&outmsg, 1, MPI_CHAR, dest, tag, MPI_COMM_WORLD);
-	  MPI_Recv(&inmsg, 1, MPI_CHAR, source, tag, MPI_COMM_WORLD, &Stat);
-	}else if (rank == 1) {
-	  dest = 2;
-	  source = 0;
-	  MPI_Recv(&inmsg, 1, MPI_CHAR, source, tag, MPI_COMM_WORLD, &Stat);
-	  MPI_Send(&outmsg, 1, MPI_CHAR, dest, tag, MPI_COMM_WORLD);
-	 }else if (rank == 2) {
-	  dest = 3;
-	  source = 1;
-	  MPI_Recv(&inmsg, 1, MPI_CHAR, source, tag, MPI_COMM_WORLD, &Stat);
-	  MPI_Send(&outmsg, 1, MPI_CHAR, dest, tag, MPI_COMM_WORLD);
-	 }else if (rank == 3) {
-	  dest = 4;
-	  source = 2;
-	  MPI_Recv(&inmsg, 1, MPI_CHAR, source, tag, MPI_COMM_WORLD, &Stat);
-	  MPI_Send(&outmsg, 1, MPI_CHAR, dest, tag, MPI_COMM_WORLD);
-	 }else if (rank == 4) {
-	  dest = 5;
-	  source = 3;
-	  MPI_Recv(&inmsg, 1, MPI_CHAR, source, tag, MPI_COMM_WORLD, &Stat);
-	  MPI_Send(&outmsg, 1, MPI_CHAR, dest, tag, MPI_COMM_WORLD);
-	 }else if (rank == 5) {
-	  dest = 0;
-	  source = 4;
-	  MPI_Recv(&inmsg, 1, MPI_CHAR, source, tag, MPI_COMM_WORLD, &Stat);
-	  MPI_Send(&outmsg, 1, MPI_CHAR, dest, tag, MPI_COMM_WORLD);
+	  source = size - 1;
+	  outmsg = rank;
+	  MPI_Send(&outmsg, 1, MPI_INT, dest, tag, MPI_COMM_WORLD);
+	  MPI_Recv(&inmsg, 1, MPI_INT, source, tag, MPI_COMM_WORLD, &Stat);
+      printf("I am %d and I have received %d\n", rank, inmsg);
+	}else{
+	  dest = (rank == size - 1) ? 0 : rank + 1;
+	  source = rank - 1;
+	  MPI_Recv(&inmsg, 1, MPI_INT, source, tag, MPI_COMM_WORLD, &Stat);
+	  printf("I am %d and I have received %d\n", rank, inmsg);
+	  outmsg = rank;
+	  MPI_Send(&outmsg, 1, MPI_INT, dest, tag, MPI_COMM_WORLD);
 	 }
 
 
