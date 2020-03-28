@@ -8,10 +8,10 @@ int main(int argc, char* argv[]){
 	
 	MPI_Init(&argc, &argv);
 	
-	/* find out process rank */
+	/* Guarda los identificadores unicos de cada proceso,generalmente entero consecutivos 0 es el master o proceso root*/
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 	
-	/* find out number of processes */
+	/* Almacena el numero de procesos */
 	MPI_Comm_size(MPI_COMM_WORLD, &size);
 	
     	printf("Hello MPI World from process %d!\n", rank);

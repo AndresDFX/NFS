@@ -130,7 +130,7 @@ ls -l /shared/demo
 El archivo debería estar disponible también en `client02`.
 
 --- 
-<h2><u> Parte 3 - MPICH</u></h2>
+<h2><u> Parte 3 - MPI</u></h2>
 
 La documentacion completa como realizar este ejercicio se encuentra en el archivo [CreandoTuPropioCluster.docx](./docs/CreandoTuPropioCluster.docx).
 
@@ -158,27 +158,27 @@ Este comando nos permitira conectarnos al `client01` por medio de SSH sin necesi
 
 
 --- 
-<h3><u> 3.2) MPI Centralizado</u></h3>
+<h3><u> 3.2) MPI Centralizado (OpenMPI) </u></h3>
 
 La guia para el desarrollo de los ejercicios se encuentran en el archivo [README](https://github.com/josanabr/distributedsystems/blob/13ba520cb80f17534aa5928421c617b1ef2ee36b/MPI/README.md).
 
-El codigo base se encuentra en lenguaje C, los archivos para compilar se encuentran en el directorio [PART3](./PART3).
+El codigo base se encuentra en lenguaje C, los archivos para compilar se encuentran en el directorio [PART3/OpenMPI](./PART3/OpenMPI/).
 
 Los archivos programados de manera centralizada son:
 
-- [mpiExample.c](./PART3/mpiExample.c)
-- [mpiExample2.c](./PART3/mpiExample2.c)
-- [mpiExample3.c](./PART3/mpiExample3.c)
-- [mpiExample4.c](./PART3/mpiExample4.c)
-- [mpiEx2a.c](./PART3/mpiEx2a.c)
-- [mpiEx2b.c](./PART3/mpiEx2b.c)
-- [mpiEx3a.c](./PART3/mpiEx3b.c)
-- [mpiEx3b.c](./PART3/mpiEx3b.c)
-- [mpiEx4a.c](./PART3/mpiEx4a.c)
-- [mpiEx4b.c](./PART3/mpiEx4b.c)
-- [mpiEx4c.c](./PART3/mpiEx4c.c)
+- [mpiExample.c](./PART3/OpenMPI/mpiExample.c)
+- [mpiExample2.c](./PART3/OpenMPI/mpiExample2.c)
+- [mpiExample3.c](./PART3/OpenMPI/mpiExample3.c)
+- [mpiExample4.c](./PART3/OpenMPI/mpiExample4.c)
+- [mpiEx2a.c](./PART3/OpenMPI/mpiEx2a.c)
+- [mpiEx2b.c](./PART3/OpenMPI/mpiEx2b.c)
+- [mpiEx3a.c](./PART3/OpenMPI/mpiEx3b.c)
+- [mpiEx3b.c](./PART3/OpenMPI/mpiEx3b.c)
+- [mpiEx4a.c](./PART3/OpenMPI/mpiEx4a.c)
+- [mpiEx4b.c](./PART3/OpenMPI/mpiEx4b.c)
+- [mpiEx4c.c](./PART3/OpenMPI/mpiEx4c.c)
 
-Asumiendo que estamos en el directorio [PART3](./PART3) dentro del *guest* `server`. Compilamos el programa asi:
+Asumiendo que estamos en el directorio [/PART3/OpenMPI/](./PART3/OpenMPI) dentro del *guest* `server`. Compilamos el programa asi:
 
 ```
 mpicc mpiExample.c -o mpiExample
@@ -192,18 +192,20 @@ mpirun -np 2 --hostfile machinefile ./mpiExample
 Donde el parametro despues de np es la cantidad de procesos que deseamos correr. El archivo `machinefile` contiene la linea localhost para indicar que se ejecutara de manera local.
 
 --- 
-<h3><u> 3.3) MPI Distribuido</u></h3>
+<h3><u> 3.3) MPI Distribuido (MPICH)</u></h3>
 
 La guia para el desarrollo de los ejercicios se encuentran en el archivo [README](https://github.com/josanabr/vagrant/blob/master/mpich-multinode/README.md).
 
-El codigo base se encuentra en lenguaje C, los archivos para compilar se encuentran en el directorio [PART3](./PART3).
+El codigo base se encuentra en lenguaje C, los archivos para compilar se encuentran en el directorio [PART3/MPICH](./PART3/OpenMPI/).
 
 Los archivos programados de manera distribuida son:
 
-- [mpidemo.c](./PART3/mpidemo.c)
+- [mpidemo.c](./PART3/MPICH/mpidemo.c)
+- [mpiDeadLock.c](./PART3/MPICH/mpiDeadLock.c)
+- [mpinoDeadLock.c](./PART3/MPICH/mpinoDeadLock.c)
 
 
-Asumiendo que estamos en el directorio [PART3](./PART3) dentro del *guest* `server`. Compilamos el programa asi:
+Asumiendo que estamos en el directorio [/PART3/MPICH/](./PART3/MPICH) dentro del *guest* `server`. Compilamos el programa asi:
 
 ```
 mpicc mpidemo.c -o /shared/mpidemo
