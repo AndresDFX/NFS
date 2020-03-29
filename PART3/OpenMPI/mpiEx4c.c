@@ -30,6 +30,5 @@ int main(int argc,char *argv[]){
 	MPI_Reduce(&count,&countTotal,1,MPI_INT,MPI_SUM,0,MPI_COMM_WORLD);
 	if (rank == 0) printf ("\nTotal: %f\n", ( (double)countTotal / npoints) * 4.0);
 
-	MPI_Finalize();
-	
-	
+	MPI_Finalize();	
+}	

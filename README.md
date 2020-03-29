@@ -164,7 +164,7 @@ La guia para el desarrollo de los ejercicios se encuentran en el archivo [README
 
 El codigo base se encuentra en lenguaje C, los archivos para compilar se encuentran en el directorio [PART3/OpenMPI](./PART3/OpenMPI/).
 
-Los archivos programados de manera centralizada son:
+Los archivos programados para ejecutar de manera centralizada son:
 
 - [mpiExample.c](./PART3/OpenMPI/mpiExample.c)
 - [mpiExample2.c](./PART3/OpenMPI/mpiExample2.c)
@@ -177,6 +177,7 @@ Los archivos programados de manera centralizada son:
 - [mpiEx4a.c](./PART3/OpenMPI/mpiEx4a.c)
 - [mpiEx4b.c](./PART3/OpenMPI/mpiEx4b.c)
 - [mpiEx4c.c](./PART3/OpenMPI/mpiEx4c.c)
+- [mpiEx5a.c](./PART3/OpenMPI/mpiEx5a.c)
 
 Asumiendo que estamos en el directorio [/PART3/OpenMPI/](./PART3/OpenMPI) dentro del *guest* `server`. Compilamos el programa asi:
 
@@ -194,16 +195,22 @@ Donde el parametro despues de np es la cantidad de procesos que deseamos correr.
 --- 
 <h3><u> 3.3) MPI Distribuido (MPICH)</u></h3>
 
-La guia para el desarrollo de los ejercicios se encuentran en el archivo [README](https://github.com/josanabr/vagrant/blob/master/mpich-multinode/README.md).
+La guia para el desarrollo de los ejercicios se encuentran en el archivo [README](https://github.com/josanabr/vagrant/blob/master/mpich-multinode/README.md) y algunas plantillas en este [enlace](https://github.com/josanabr/vagrant/tree/master/mpich-multinode/examples).
 
 El codigo base se encuentra en lenguaje C, los archivos para compilar se encuentran en el directorio [PART3/MPICH](./PART3/OpenMPI/).
 
-Los archivos programados de manera distribuida son:
+Los archivos programados para ejecutar de manera distribuida son:
 
 - [mpidemo.c](./PART3/MPICH/mpidemo.c)
 - [mpiDeadLock.c](./PART3/MPICH/mpiDeadLock.c)
-- [mpinoDeadLock.c](./PART3/MPICH/mpinoDeadLock.c)
-
+- [mpiDeadLock(no).c](./PART3/MPICH/mpinDeadLock(no).c)
+- [mpiBcast.c](./PART3/MPICH/mpiBcast.c)
+- [mpiCastSendRecv.c](./PART3/MPICH/mpiCastSendRecv.c)
+- [mpiCompareBcast.c](./PART3/MPICH/mpiCompareBcast.c)
+- [mpiGather.c](./PART3/MPICH/mpiGather.c)
+- [mpiGatherScatter.c](./PART3/MPICH/mpiGatherScatter.c)
+- [mpiScatter.c](./PART3/MPICH/mpiScatter.c)
+- [mpiScatterReduce.c](./PART3/MPICH/mpiScatterReduce.c)
 
 Asumiendo que estamos en el directorio [/PART3/MPICH/](./PART3/MPICH) dentro del *guest* `server`. Compilamos el programa asi:
 
@@ -218,7 +225,7 @@ mpirun -n 4 -f hosts4run /shared/mpidemo
 ```
 Donde el parametro despues de n es la cantidad de procesos que deseamos correr. El archivo `hosts4file` contiene la lista de clientes donde se ejecutara el codigo.
 
-**NOTA:** El directorio `/shared` es el directorio compartido mediante la configuracion de NFS.  
+**NOTA:** En caso de no funciona revisar el directorio `/shared` ya que es el directorio compartido mediante la configuracion de NFS necesario para que las VMS compartan informacion entre si por medio de SSH.
 
 </div>
 
