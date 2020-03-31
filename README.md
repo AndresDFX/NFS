@@ -158,7 +158,7 @@ Este comando nos permitira conectarnos al `client01` por medio de SSH sin necesi
 
 
 --- 
-<h3><u> 3.2) MPI Centralizado (OpenMPI) </u></h3>
+<h4><u> 3.1.1) MPI Centralizado (OpenMPI) </u></h4>
 
 La guia para el desarrollo de los ejercicios se encuentran en el archivo [README](https://github.com/josanabr/distributedsystems/blob/13ba520cb80f17534aa5928421c617b1ef2ee36b/MPI/README.md).
 
@@ -193,7 +193,7 @@ mpirun -np 2 --hostfile machinefile ./mpiExample
 Donde el parametro despues de np es la cantidad de procesos que deseamos correr. El archivo `machinefile` contiene la linea localhost para indicar que se ejecutara de manera local.
 
 --- 
-<h3><u> 3.3) MPI Distribuido (MPICH)</u></h3>
+<h4><u> 3.1.2) MPI Distribuido (MPICH)</u></h4>
 
 La guia para el desarrollo de los ejercicios se encuentran en el archivo [README](https://github.com/josanabr/vagrant/blob/master/mpich-multinode/README.md) y algunas plantillas en este [enlace](https://github.com/josanabr/vagrant/tree/master/mpich-multinode/examples).
 
