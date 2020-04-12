@@ -1,0 +1,34 @@
+universe=vanilla
+
+transfer_executable = False
+should_transfer_files = YES
+when_to_transfer_output =  ON_EXIT_OR_EVICT
+transfer_input_files = run_0, run_1, run_2, run_3
+
+Requirements = Arch=="X86_64" || Arch =="INTEL"
+executable=/bin/cat
+log=Log_unir.txt
+
+num=200
+arguments=run_0/$(num).txt run_1/$(num).txt run_2/$(num).txt run_3/$(num).txt
+output=urls_$(num).txt
+error=Error_$(num).txt
+queue
+
+num=300
+arguments=run_0/$(num).txt run_1/$(num).txt run_2/$(num).txt run_3/$(num).txt
+output=urls_$(num).txt
+error=Error_$(num).txt
+queue
+
+num=400
+arguments=run_0/$(num).txt run_1/$(num).txt run_2/$(num).txt run_3/$(num).txt
+output=urls_$(num).txt
+error=Error_$(num).txt
+queue
+
+num=500
+arguments=run_0/$(num).txt run_1/$(num).txt run_2/$(num).txt run_3/$(num).txt
+output=urls_$(num).txt
+error=Error_$(num).txt
+queue

@@ -20,10 +20,11 @@ En el archivo [Vagrantfile](./Vagrantfile) comentamos las lineas correspondiente
 
 **Socket UDP:** Los sockets UDP son sockets no orientados a conexión. Esto quiere decir que un programa puede abrir un socket y ponerse a escribir mensajes en él o leer, sin necesidad de esperar a que alguien se conecte en el otro extremo del socket. El protocolo UDP, al no ser orientado a conexión, no garantiza que el mensaje llegue a su destino. Parece claro que si mi programa envía un mensaje y no hay nadie escuchando, ese mensaje se pierde. De todas formas, aunque haya alguien escuchando, el protocolo tampoco garantiza que el mensaje llegue. Lo único que garantiza es, que si llega, llega sin errores.
 
-
 **NFS:** Network File System es un protocolo de sistema de archivos distribuido, creado originalmente pero Sun Microsystems. A través de NFS, puede permitir que un sistema comparta directorios y archivos con otros en una red. En el uso compartido de archivos NFS, los usuarios e incluso los programas pueden acceder a la información en sistemas remotos casi como si residieran en una máquina local.
 
 **MPI:** Message Passing Interface es un protocolo de comunicación entre computadoras. Es el estándar para la comunicación entre los nodos que ejecutan un programa en un sistema de memoria distribuida. Las implementaciones en MPI consisten en un conjunto de bibliotecas de rutinas que pueden ser utilizadas en programas escritos en los lenguajes de programación C, C++, Fortran y Ada. La ventaja de MPI sobre otras bibliotecas de paso de mensajes, es que los programas que utilizan la biblioteca son portables (dado que MPI ha sido implementado para casi toda arquitectura de memoria distribuida), y rápidos, (porque cada implementación de la biblioteca ha sido optimizada para el hardware en la cual se ejecuta).
+
+**HTCondor:** Es una herramienta de software que permite sacar provecho de aquellos recursos computacionales que se encuentran subutilizados a través de la integración y conformación de plataformas computacionales heterogéneas capaces de procesar altos volúmenes de tareas por unidad de tiempo (throughpupt).
 
 ---
 <h2><u> Parte 1 - Socket UDP</u></h2>
@@ -227,6 +228,26 @@ Donde el parametro despues de n es la cantidad de procesos que deseamos correr. 
 
 **NOTA:** En caso de no funciona revisar el directorio `/shared` ya que es el directorio compartido mediante la configuracion de NFS necesario para que las VMS compartan informacion entre si por medio de SSH.
 
+<h2><u> Parte 4 - HTCondor</u></h2>
+
+La documentacion completa como realizar este ejercicio se encuentra en el archivo [CreandoTuPropioCluster.docx](./docs/CreandoTuPropioCluster.docx).
+
+
+
+Para llevar acabo esta parte es necesario que la maquina `server` pueda acceder por SSH a las maquinas `client01` y `client02` por medio de una clave publica RSA (Sin contraseña) esto ya se encuentra preconfigurado en el archivo [Vagrantfile](./Vagrantfile)
+
+
+
+
 </div>
+
+
+
+
+
+
+
+
+
 
 

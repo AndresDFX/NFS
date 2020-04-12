@@ -1,0 +1,17 @@
+universe=vanilla
+
+transfer_executable = False
+should_transfer_files = YES
+when_to_transfer_output =  ON_EXIT_OR_EVICT
+transfer_input_files = checkBM.py
+
+executable=/usr/bin/python
+arguments=checkBM.py urlsC_$(process).txt
+
+Requirements = Arch=="X86_64" || Arch =="INTEL"
+
+log=Log_probar.txt
+input=urlsC_$(process).txt
+error=Error_probar_$(process).txt
+initialdir=run_$(process)
+queue 4

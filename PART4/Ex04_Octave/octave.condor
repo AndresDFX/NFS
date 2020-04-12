@@ -1,0 +1,22 @@
+##
+# Test Submit File
+##
+Universe   = docker
+
+should_transfer_files = Yes
+when_to_transfer_output = ON_EXIT_OR_EVICT
+
+# DockerHub de la Imagen: https://hub.docker.com/r/simexp/octave/
+docker_image   = simexp/octave
+#Executable     = octave
+Executable     = ./runOctave.bash
+
+Input          = demo.octave
+Log            = Log_octave.txt
+Output         = Octave_Out.$(Process)
+Error          = Octave_Err.$(Process)
+
+idx = $(Process)+10
+Val = $INT(idx)
+Arguments = $(Val)
+Queue 40

@@ -1,0 +1,4 @@
+Job octave octave.condor
+Job ffmpeg ffmpeg.condor
+SCRIPT PRE  ffmpeg ubica.bash
+PARENT octave CHILD ffmpeg

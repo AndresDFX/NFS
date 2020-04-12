@@ -1,0 +1,11 @@
+# Inicia un flujo de tareas que
+# verifica el estado de un conjunto de URLs
+# Use: condor_submit_dag check.dag
+JOB  A  limpiar.condor
+JOB  B  partir.condor
+JOB  C  probar.condor
+JOB  D  unir.condor
+SCRIPT PRE  C  prepara.bash
+PARENT A CHILD B
+PARENT B CHILD C
+PARENT C CHILD D

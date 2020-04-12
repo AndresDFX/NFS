@@ -1,0 +1,16 @@
+universe=vanilla
+
+transfer_executable = False
+should_transfer_files = YES
+when_to_transfer_output =  ON_EXIT_OR_EVICT
+transfer_input_files = limpiar.bash
+
+executable=/bin/bash
+arguments=limpiar.bash urls.txt
+
+Requirements = Arch=="X86_64" || Arch =="INTEL"
+
+log=Log_Limpiar.txt
+input=urls.txt
+error=Error_limpia.txt
+queue
