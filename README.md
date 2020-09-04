@@ -1,6 +1,6 @@
 <div align="justify">
 
-<h1><u> Instrucciones Generales</u></h1>
+<h1><u> Descripcion</u></h1>
 
 
 En el script [main.sh](main.sh) se encuentran los recursos necesarios para crear el cluster, es posible ejecutar en sistemas UNIX de manera nativa y en Windows usando Git Bash, GNU Win32 coreutils, las utilidades de MSYS usadas en MinGW o la opcion mas **RECOMENDADA** [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10) que permita ejecutar scripts en sistemas Windows.
